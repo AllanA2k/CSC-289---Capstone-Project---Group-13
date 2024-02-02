@@ -1,5 +1,5 @@
 from user import User
-from sqlite import create_table, add_user, display_table
+from sqlite import create_table, add_user, update_user_income, display_table
 
 def user_interface():
     print("\nWelcome to Shuttle Cash!")
@@ -11,6 +11,17 @@ def user_interface():
     choice = input("Please enter your choice: ")
     return int(choice)
 
+def edit_user_income():
+    first_name = input("Enter first name: ")
+    last_name = input("Enter last name: ")
+    new_income = float(input("Enter the new total income: "))
+
+    if new_income <= 12750:
+        print("The new income is below the taxable amount.")
+    else:
+        update_user_income(first_name, last_name, new_income)
+        print("User income updated successfully.")
+        
 create_table()
 
 choice = 0
@@ -20,14 +31,17 @@ while choice != 5:
         case 1:
             first_name = input("Enter first name: ")
             last_name = input("Enter last name: ")
+            marital_status = input("Single or Married: ")
             total_income = float(input("Enter total income: "))
-            if total_income <= 12750:   # If we don't include this, users with negative taxes owed would be stored in the database
+            taxable_amount = 12750 if marital_status == "Single" else 25500 if marital_status == "Married" else 0
+            
+            if total_income <= taxable_amount:
                 print("Your income is below the taxable amount")
             else:
-                user1 = User(first_name, last_name, total_income)
+                user1 = User(first_name, last_name, taxable_amount, total_income)
                 add_user(user1)
         case 2:
-            print("Placeholder :)")
+            edit_user_income()
         case 3:
             display_table()
         case 4:
